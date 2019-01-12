@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Punchrem</string>
+    <string name="setting">Settings</string>
+    <string name="notification">notification</string>
+    <string name="function">function</string>
+    <string name="punch_in">punch in</string>
+    <string name="punch_out">punch out</string>
+    <string name="none">none</string>
+    <string name="backup">backup</string>
+    <string name="restore">restore</string>
+    <string name="clear">clear</string>
+    <string name="set_time">set time</string>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="settings_type">28dp</dimen>
+    <dimen name="settings_type_text">14sp</dimen>
+    <dimen name="settings_item">50dp</dimen>
+    <dimen name="settings_item_text">18sp</dimen>
+    <dimen name="padding_start">14dp</dimen>
+    <dimen name="record">60dp</dimen>
+    <dimen name="padding">4dp</dimen>
+    <dimen name="record_text">20sp</dimen>
+</resources>

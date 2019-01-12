@@ -1,0 +1,39 @@
+{
+    "manifest_version": 2,
+    "name": "西瓜",
+    "description": "大夏天吃西瓜是最舒服的！！！",
+    "version": "0.0.1",
+    "icons": {
+        "16": "images/icon16.png",
+        "24": "images/icon24.png",
+        "32": "images/icon32.png",
+        "48": "images/icon48.png",
+        "64": "images/icon64.png",
+        "72": "images/icon72.png",
+        "96": "images/icon96.png",
+        "128": "images/icon128.png"
+    },
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+    "content_scripts":[{
+        "js":["jquery-3.3.1.slim.min.js","content.js"],
+        "matches": ["https://bcy.net/item/detail/*",
+            "http://mebook.cc/*",
+            "https://pan.baidu.com/share/*",
+            "https://zhuanlan.zhihu.com/p/*",
+            "https://www.jianshu.com/p/*",
+            "https://blog.csdn.net/*",
+            "http://blog.konghy.cn/*",
+            "https://juejin.im/entry/*"]
+    }],
+    "permissions": [
+        "activeTab",
+        "tabs",
+        "declarativeContent",
+        "downloads",
+        "storage"
+    ],
+    "page_action": {}
+}

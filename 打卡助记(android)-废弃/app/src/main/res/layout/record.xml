@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/record"
+    android:minHeight="@dimen/record"
+    android:baselineAligned="false"
+    android:orientation="horizontal">
+
+
+    <TextView
+        android:id="@+id/day_of_month"
+        android:layout_width="0dp"
+        android:textSize="@dimen/record_text"
+        android:layout_height="match_parent"
+        android:layout_weight="0.8"
+        android:gravity="center"
+        tools:text="01" />
+
+    <TextView
+        android:textSize="@dimen/record_text"
+        android:id="@+id/day_of_week"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.8"
+        android:gravity="center_vertical"
+        tools:text="Fri" />
+
+    <LinearLayout
+        android:id="@+id/punch_in"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:orientation="horizontal">
+
+        <TextView
+            android:paddingEnd="@dimen/padding"
+            android:paddingStart="@dimen/padding"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/punch_in"
+            android:textSize="@dimen/record_text" />
+
+        <TextView
+            android:id="@+id/in_time"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="@dimen/record_text"
+            tools:text="08:00" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/punch_out"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:orientation="horizontal">
+
+        <TextView
+            android:paddingEnd="@dimen/padding"
+            android:paddingStart="@dimen/padding"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/punch_out"
+            android:textSize="@dimen/record_text" />
+
+        <TextView
+            android:id="@+id/out_time"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="@dimen/record_text"
+            tools:text="17:30" />
+    </LinearLayout>
+
+</LinearLayout>

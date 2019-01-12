@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:showDividers = "middle|beginning"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    tools:context=".SettingsFragment">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_type"
+        android:gravity="bottom"
+        android:paddingStart="@dimen/padding_start"
+        android:text="@string/notification"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/settings_type_text" />
+
+    <android.support.constraint.ConstraintLayout
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="false"
+        android:id="@+id/in_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_item">
+
+        <TextView
+            android:textColor="@color/unable"
+            android:id="@+id/in_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/settings_item_text"
+            android:paddingStart="@dimen/padding_start"
+            android:text="@string/punch_in" />
+
+        <TextView
+            android:id="@+id/in_time"
+            android:textColor="@color/unable"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingStart="@dimen/padding_start"
+            android:gravity="center_vertical"
+            android:text="@string/none"
+            android:textSize="@dimen/settings_item_text"
+            android:visibility="visible"
+            app:layout_constraintStart_toEndOf="@+id/in_title" />
+
+        <Switch
+            android:checked="false"
+            android:id="@+id/in_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+    <ImageView
+        android:src="@drawable/divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <android.support.constraint.ConstraintLayout
+        android:background="?android:attr/selectableItemBackground"
+        android:id="@+id/out_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_item">
+
+        <TextView
+            android:textColor="@color/unable"
+            android:id="@+id/out_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/settings_item_text"
+            android:paddingStart="@dimen/padding_start"
+            android:text="@string/punch_out" />
+
+        <TextView
+            android:textColor="@color/unable"
+            android:id="@+id/out_time"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingStart="@dimen/padding_start"
+            android:gravity="center_vertical"
+            android:text="@string/none"
+            android:textSize="@dimen/settings_item_text"
+            android:visibility="visible"
+            app:layout_constraintStart_toEndOf="@+id/out_title" />
+
+        <Switch
+            android:checked="false"
+            android:id="@+id/out_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+    <ImageView
+        android:src="@drawable/divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_type"
+        android:gravity="bottom"
+        android:paddingStart="@dimen/padding_start"
+        android:text="@string/function"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/settings_type_text" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_item">
+        <Button
+            android:id="@+id/backup"
+            android:text="@string/backup"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+        <Button
+            android:id="@+id/restore"
+            android:text="@string/restore"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_item">
+
+        <Button
+            android:id="@+id/clear"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="@string/clear" />
+
+        <Button
+            android:id="@+id/empty"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="@string/empty" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,8 @@
+密钥库密码 123456
+密钥名 release 密钥密码 123456
+开发者名字 kinuxer
+组织单位 person
+组织 person
+城市 hangzhou
+省份 zhejiang
+国家码 CN
