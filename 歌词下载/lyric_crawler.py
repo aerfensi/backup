@@ -1,6 +1,7 @@
 from enum import Enum
 from os import path
 from funcs import *
+from time import time
 import pyperclip
 
 SOURCE = Enum('Source', {'Nets': '网易', 'Tencent': '腾讯'})
@@ -8,6 +9,20 @@ SOURCE = Enum('Source', {'Nets': '网易', 'Tencent': '腾讯'})
 
 class Lyric:
     nets_url = 'https://api.imjad.cn/cloudmusic/?type=lyric&id={}&br=128000'
+    qq_url = ('https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg?'
+              'callback=MusicJsonCallback_lrc'
+              '&pcachetime={pcachetime}'
+              '&songmid={songmid}'
+              '&g_tk=5381'
+              '&jsonpCallback=MusicJsonCallback_lrc'
+              '&loginUin=0'
+              '&hostUin=0'
+              '&format=jsonp'
+              '&inCharset=utf8'
+              '&outCharset=utf-8'
+              '&notice=0'
+              '&platform=yqq'
+              '&needNewCode=0')
     dir_path = path.join(path.expanduser('~'), r'Downloads\歌词')
 
     def __init__(self, id: str, source: SOURCE, filename: str):
@@ -18,6 +33,8 @@ class Lyric:
         """
         if source is SOURCE.Nets:
             self.url = Lyric.nets_url.format(id)
+        elif source is SOURCE.Tencent:
+            self.url = Lyric.qq_url.format(pcachetime=str(int(time() * 1000)), songmid=id)
         self.source = source
         self.file_path = path.join(Lyric.dir_path, filename)
         self.response = None
@@ -54,7 +71,7 @@ class Lyric:
 
         :param func: 形如 function(o_lyric:str, t_lyric:str)->str 的函数
         """
-        print('格式话歌词')
+        print('格式化歌词')
         self.lyric = func(self.o_lyric, self.t_lyric)
         return self
 
@@ -88,23 +105,20 @@ def user_in() -> (str, SOURCE, str):
     except KeyboardInterrupt:
         exit()
 
-    if len(args) != 3:
-        print('<user_in> error: 输入参数数量不为3')
-        exit()
+    assert len(args) == 3, '<user_in> error: 输入参数数量不为3'
 
     id_ = args[2].strip()
     debug(id_)
-    if not id_.isdigit():
-        print('<user_in> error: 输入的id不是数字')
-        exit()
 
     src = args[1].strip()
     debug(src)
     if src == 'w':
+        assert id_.isdigit(), '<user_in> error: 输入的id不是数字'
         src = SOURCE.Nets
+    elif src == 'q':
+        src = SOURCE.Tencent
     else:
-        print('<user_in> error: 输入的source不支持')
-        exit()
+        raise AssertionError('<user_in> error: 输入的source不支持')
 
     filename = args[0].strip() + '.lrc'
     debug(filename)
@@ -116,16 +130,21 @@ def main():
     lrc = Lyric(id_, src, filename)
     print(lrc, '\n')
     if lrc.source == SOURCE.Nets:
-        try:
-            lrc.fetch(fetch_base) \
-                .extract(extract_imjad_nets) \
-                .format(merge_lrc) \
-                .output()
-        except AssertionError as e:
-            print(e)
+        lrc.fetch(fetch_base) \
+            .extract(extract_imjad_nets) \
+            .format(merge_lrc) \
+            .output()
+    elif lrc.source == SOURCE.Tencent:
+        lrc.fetch(fetch_qq) \
+            .extract(extract_qq) \
+            .format(merge_lrc) \
+            .output()
 
 
 if __name__ == "__main__":
     print_info()
     while True:
-        main()
+        try:
+            main()
+        except AssertionError as e:
+            print(e)
