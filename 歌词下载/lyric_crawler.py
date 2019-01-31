@@ -25,16 +25,16 @@ class Lyric:
               '&needNewCode=0')
     dir_path = path.join(path.expanduser('~'), r'Downloads\歌词')
 
-    def __init__(self, id: str, source: SOURCE, filename: str):
+    def __init__(self, id_: str, source: SOURCE, filename: str):
         """
-        :param id: 抓取歌词的id
+        :param id_: 抓取歌词的id
         :param source: 抓取歌词的网站
         :param filename: 保存歌词用的文件名
         """
         if source is SOURCE.Nets:
-            self.url = Lyric.nets_url.format(id)
+            self.url = Lyric.nets_url.format(id_)
         elif source is SOURCE.Tencent:
-            self.url = Lyric.qq_url.format(pcachetime=str(int(time() * 1000)), songmid=id)
+            self.url = Lyric.qq_url.format(pcachetime=str(int(time() * 1000)), songmid=id_)
         self.source = source
         self.file_path = path.join(Lyric.dir_path, filename)
         self.response = None
@@ -100,11 +100,7 @@ def print_info():
 
 
 def user_in() -> (str, SOURCE, str):
-    try:
-        args = input('请输入: ').split(',')
-    except KeyboardInterrupt:
-        exit()
-
+    args = input('请输入: ').split(',')
     assert len(args) == 3, '<user_in> error: 输入参数数量不为3'
 
     id_ = args[2].strip()
@@ -148,3 +144,5 @@ if __name__ == "__main__":
             main()
         except AssertionError as e:
             print(e)
+        except KeyboardInterrupt:
+            exit()

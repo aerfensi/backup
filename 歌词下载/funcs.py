@@ -69,20 +69,23 @@ def merge_lrc(o_lyric: str, t_lyric: str) -> str:
     t_list = t_lyric.split('\n')
     lyric = list()
     # 搜索t_lyric中的元素时的起始下标。
+    # t_ 歌词译文，s，start，开始搜索的位置；t，time；m，match，正则匹配结果；c，content，歌词内容
     # 默认为0，即从t_lyric中的第0个元素开始向后搜索
     t_s = 0
     for o_e in o_list:
         o_m = re.match(r'\[(.*?)\].*', o_e)
         if o_m is None:
             continue
-        o_t = o_m.group(1)
+        # 将 MM:SS.f以及MM:SS.ff的时间格式补全为MM:SS.fff
+        # 原因是歌词原文和译文的时间格式可能不同
+        o_t = '{:0<12}'.format(o_m.group(1))
         # debug(o_t)
         for t_i, t_e in enumerate(t_list[t_s:], start=t_s):
             # debug(t_e)
             t_m = re.match(r'\[(.*?)\](.*)', t_e)
             if t_m is None:
                 break
-            t_t = t_m.group(1)
+            t_t = '{:0<12}'.format(t_m.group(1))
             t_c = t_m.group(2)
             if t_t == o_t and len(t_c) != 0 and not t_c.isspace():
                 o_e = '{} （{}）'.format(o_e, t_c)
