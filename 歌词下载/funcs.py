@@ -3,6 +3,7 @@ import urllib3
 import re
 import json
 from base64 import b64decode
+from datetime import datetime
 
 # 不要显示警告，比如不显示忽略SSL证书检验时的警告
 urllib3.disable_warnings()
@@ -78,18 +79,72 @@ def merge_lrc(o_lyric: str, t_lyric: str) -> str:
             continue
         # 将 MM:SS.f以及MM:SS.ff的时间格式补全为MM:SS.fff
         # 原因是歌词原文和译文的时间格式可能不同
-        o_t = '{:0<12}'.format(o_m.group(1))
+        o_t = '{:0<9}'.format(o_m.group(1))
         # debug(o_t)
         for t_i, t_e in enumerate(t_list[t_s:], start=t_s):
             # debug(t_e)
             t_m = re.match(r'\[(.*?)\](.*)', t_e)
             if t_m is None:
-                break
-            t_t = '{:0<12}'.format(t_m.group(1))
+                continue
+            t_t = '{:0<9}'.format(t_m.group(1))
             t_c = t_m.group(2)
             if t_t == o_t and len(t_c) != 0 and not t_c.isspace():
-                o_e = '{} （{}）'.format(o_e, t_c)
+                m_r = '{} （{}）'.format(o_e, t_c)
                 t_s = t_i
                 break
-        lyric.append(o_e)
+            else:
+                m_r = o_e
+        lyric.append(m_r)
+    return '\n'.join(lyric)
+
+
+def merge_lrc_timedelta(o_lyric: str, t_lyric: str) -> str:
+    """
+    合并歌词，t_lyric为空，则直接返回o_lyric。
+    歌词译文中找不到与歌词原文时间相同的歌词，则从译文中寻找一条时间差小于2秒，且最接近原文时间的歌词。
+
+    :param o_lyric: 格式正确的歌词原文的字符串。
+    :param t_lyric: 格式正确的歌词译文的字符串。
+    :returns: 合并后的歌词的字符串，格式为 [时间点]歌词原文 （歌词译文）
+    """
+    assert o_lyric, '<merge_lrc> error: 无歌词原文 o_lyric'
+
+    if not t_lyric:
+        return o_lyric
+
+    o_list = o_lyric.split('\n')
+    t_list = t_lyric.split('\n')
+    lyric = list()
+
+    # 歌词译文中的搜索结果search_result
+    rr = None
+    # 歌词译文中的搜索结果的暂存区，存入的元素格式为 (delta_time,lyric_content)
+    stage = list()
+    for o_e in o_list:
+        rr = None
+        stage.clear()
+        o_m = re.match(r'\[(\d{2}:\d{2}\.\d{2,3})\](.+)', o_e)
+        if o_m is None:
+            continue
+        o_t = datetime.fromisoformat('2019-01-01:00:{:0<9}'.format(o_m.group(1)))
+        for t_e in t_list:
+            t_m = re.match(r'\[(\d{2}:\d{2}\.\d{2,3})\](.+)', t_e)
+            if t_m is None:
+                continue
+            t_t = datetime.fromisoformat('2019-01-01:00:{:0<9}'.format(t_m.group(1)))
+            delta_time = (o_t - t_t).total_seconds()
+            if delta_time == 0:
+                rr = t_m.group(2)
+                break
+            elif delta_time < 2 and delta_time > -2:
+                stage.append((delta_time, t_m.group(2)))
+            elif delta_time < -2:
+                break
+        if rr is None and stage:
+            rr = min(stage, key=lambda i: abs(i[0]))[1]
+            lyric.append('{} （{}）'.format(o_e, rr))
+        elif rr is None and not stage:
+            lyric.append(o_e)
+        elif rr:
+            lyric.append('{} （{}）'.format(o_e, rr))
     return '\n'.join(lyric)

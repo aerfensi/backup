@@ -128,12 +128,12 @@ def main():
     if lrc.source == SOURCE.Nets:
         lrc.fetch(fetch_base) \
             .extract(extract_imjad_nets) \
-            .format(merge_lrc) \
+            .format(merge_lrc_timedelta) \
             .output()
     elif lrc.source == SOURCE.Tencent:
         lrc.fetch(fetch_qq) \
             .extract(extract_qq) \
-            .format(merge_lrc) \
+            .format(merge_lrc_timedelta) \
             .output()
 
 

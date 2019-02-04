@@ -1,11 +1,11 @@
 import unittest
 import lyric_crawler
 import funcs
+from unittest import mock
 
 
 class TestLyricCrawler(unittest.TestCase):
 
-    @unittest.skip
     def test_user_in(self):
         try:
             args = lyric_crawler.user_in()
@@ -16,14 +16,12 @@ class TestLyricCrawler(unittest.TestCase):
         except BaseException as e:
             self.assertIsInstance(e, SystemExit)
 
-    @unittest.skip
     def test_merge_lrc(self):
         try:
             funcs.merge_lrc(None, None)
         except BaseException as e:
             self.assertIsInstance(e, AssertionError)
 
-    @unittest.skip
     def test_fetch_qq(self):
         lrc = lyric_crawler.Lyric('002BUvdb0Pw3q3', lyric_crawler.SOURCE.Tencent, 'None')
         response = lrc.fetch(funcs.fetch_qq).response
@@ -31,7 +29,7 @@ class TestLyricCrawler(unittest.TestCase):
         self.assertRegex(response.text, '^MusicJsonCallback_lrc')
 
     def test_extract_qq(self):
-        respone = type('Respone', (), {})
+        respone = mock.Mock()
         respone.status_code = 200
         respone.text = ('MusicJsonCallback_lrc({'
                         '"retcode":0,'
@@ -42,7 +40,13 @@ class TestLyricCrawler(unittest.TestCase):
         o_lrc, t_lrc = funcs.extract_qq(respone)
         # print('o_lrc = ', o_lrc, 't_lrc = ', t_lrc, sep='\n')
         self.assertNotEqual(o_lrc, None)
+        self.assertEqual(t_lrc, None)
 
-
-if __name__ == "__main__":
-    unittest.main()
+    def test_merge_lrc_timedelta(self):
+        with open(r'test_res\timedelta_o_lyric.txt',encoding='utf8') as o_file:
+            o_lyric=o_file.read()
+        with open(r'test_res\timedelta_t_lyric.txt',encoding='utf8') as t_file:
+            t_lyric=t_file.read()
+        # lyric=funcs.merge_lrc_timedelta(o_lyric,t_lyric)
+        lyric = funcs.merge_lrc_timedelta(o_lyric, t_lyric)
+        print(lyric)
