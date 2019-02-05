@@ -92,8 +92,8 @@ def merge_lrc(o_lyric: str, t_lyric: str) -> str:
                 m_r = '{} （{}）'.format(o_e, t_c)
                 t_s = t_i
                 break
-            else:
-                m_r = o_e
+        else:
+            m_r = o_e
         lyric.append(m_r)
     return '\n'.join(lyric)
 
@@ -112,14 +112,15 @@ def merge_lrc_timedelta(o_lyric: str, t_lyric: str) -> str:
     if not t_lyric:
         return o_lyric
 
-    o_list = o_lyric.split('\n')
-    t_list = t_lyric.split('\n')
+    o_list = [i.strip() for i in o_lyric.split('\n')]
+    t_list = [i.strip() for i in t_lyric.split('\n')]
     lyric = list()
 
     # 歌词译文中的搜索结果search_result
     rr = None
-    # 歌词译文中的搜索结果的暂存区，存入的元素格式为 (delta_time,lyric_content)
+    # 歌词译文中的搜索结果的暂存区，存入的元素格式为 (delta_time,lyric_content,content_index)
     stage = list()
+    t_s = 0
     for o_e in o_list:
         rr = None
         stage.clear()
@@ -127,7 +128,8 @@ def merge_lrc_timedelta(o_lyric: str, t_lyric: str) -> str:
         if o_m is None:
             continue
         o_t = datetime.fromisoformat('2019-01-01:00:{:0<9}'.format(o_m.group(1)))
-        for t_e in t_list:
+        debug('<merge_lrc_timedelta> t_s =', t_s)
+        for t_i, t_e in enumerate(t_list[t_s:], start=t_s):
             t_m = re.match(r'\[(\d{2}:\d{2}\.\d{2,3})\](.+)', t_e)
             if t_m is None:
                 continue
@@ -135,14 +137,16 @@ def merge_lrc_timedelta(o_lyric: str, t_lyric: str) -> str:
             delta_time = (o_t - t_t).total_seconds()
             if delta_time == 0:
                 rr = t_m.group(2)
+                t_s = t_i
                 break
-            elif delta_time < 2 and delta_time > -2:
-                stage.append((delta_time, t_m.group(2)))
+            elif 2 > delta_time > -2:
+                stage.append((delta_time, t_m.group(2), t_i))
             elif delta_time < -2:
                 break
         if rr is None and stage:
-            rr = min(stage, key=lambda i: abs(i[0]))[1]
-            lyric.append('{} （{}）'.format(o_e, rr))
+            rr = min(stage, key=lambda i: abs(i[0]))
+            t_s = rr[2]
+            lyric.append('{} （{}）'.format(o_e, rr[1]))
         elif rr is None and not stage:
             lyric.append(o_e)
         elif rr:
