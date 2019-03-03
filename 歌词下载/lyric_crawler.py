@@ -23,7 +23,7 @@ class Lyric:
               '&notice=0'
               '&platform=yqq'
               '&needNewCode=0')
-    dir_path = path.join(path.expanduser('~'), r'Downloads\歌词')
+    dir_path = path.join(path.expanduser('~'), '音乐整理')
 
     def __init__(self, id_: str, source: SOURCE, filename: str):
         """
