@@ -7,12 +7,13 @@ from unittest import mock
 class TestLyricCrawler(unittest.TestCase):
 
     def test_user_in(self):
+        lyric_crawler.print_info()
         try:
             args = lyric_crawler.user_in()
-            self.assertEqual(3, len(args))
             self.assertTrue(isinstance(args[0], str) and args[0].isdigit())
             self.assertIsInstance(args[1], lyric_crawler.SOURCE)
             self.assertIsInstance(args[2], str)
+            print(args)
         except BaseException as e:
             self.assertIsInstance(e, SystemExit)
 
