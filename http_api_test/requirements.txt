@@ -1,0 +1,5 @@
+ddt
+openpyxl
+requests
+jsonpath2
+requests[socks]
