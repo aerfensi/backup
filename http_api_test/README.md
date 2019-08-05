@@ -1,6 +1,6 @@
-# http_api_test
+# http api test
 
-简单的接口自动化测试框架，仅学习使用，功能少，估计bug也很多，如果边学习边完善吧。
+简单的接口自动化测试框架，仅学习使用，功能少，估计bug也很多，边学习边完善吧。
 
 ##  使用方法
 
@@ -18,7 +18,7 @@
 执行testcases目录下的所有测试用例表格：  
 python run.py
 
-执行指定excel中所有的测试用例：  
+执行指定excel中所有的测试用例（excel文件的名字不要带后缀名）：  
 `python run.py <excel文件的名字>`
 或者：  
 `python run.py <excel文件的名字>.<工作表的名字>`
@@ -36,7 +36,7 @@ conf.ini中每个属性都有注释，这里不再赘述。
 ignore：只要填写了，不管填了什么，都会忽略该测试用例。  
 headers：填写为json格式
 
-如果Content-Type为multipart/form-data，则body的格式如下：
+body：如果Content-Type为multipart/form-data，则body的格式如下：
 ```json
 [
     //上传纯文本
@@ -57,15 +57,17 @@ headers：填写为json格式
 
 statuscode：不填的话默认为200  
 
-checkpoints：检查response body，body必须是json。  
-checkpoints的格式如下  
-相等：json表达式==python支持的数据类型（int、str、bool、None）  
-使用正则表达式搜索：json表达式=~字符串  
+checkpoints：检查response body，body必须是json，如果body不是json，那就不要填checkpoints。  
+checkpoints的格式如下：  
+**相等**：json表达式==python支持的数据类型（int、str、bool、None）  
+**使用正则表达式搜索**：json表达式=~字符串  
+还支持**<、>、<=、>=、!=**这种比较运算符。
 支持同时使用多个检查点，用换行符隔开  
 例如：  
 $.id==12345  
 $.name==None  
 $.ok==True  
+$.msg=='message'
 
 setprops：将response body中的属性保存下来，供后续的测试用例使用。  
 格式："key"="json表达式"  
@@ -74,7 +76,7 @@ setprops：将response body中的属性保存下来，供后续的测试用例�
 ### 项目工程目录结构
 
 - base：放代码的
-- HtmlTestRunner：网上找的，输出html测试报告。不用pip安装，而是直接放在项目中，因为它生成的测试报告没有显示指定为utf-8，我要改它的代码。
+- HtmlTestRunner：网上找的，输出html测试报告。不用pip安装，而是直接放在项目中，因为它生成的测试报告没有显示指定为utf-8，可能出现乱码，所以我要改它的代码。
 - logs：放log的
 - reports：放测试报告的
 - res：放需要被http请求上传的文件的

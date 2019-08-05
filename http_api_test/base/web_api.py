@@ -18,9 +18,6 @@ def key_to_lowercase(d: dict) -> dict:
     return r
 
 
-_res_dir = Path(__file__).resolve().parents[1] / 'res'
-
-
 def load_multipart(data: list):
     """
     将测试用例表格中读取的body转换为requests需要的files对象
@@ -34,7 +31,7 @@ def load_multipart(data: list):
         file_name = d.get("file_name")
         file_obj = d.get("file_obj")
         content_type = d.get("content-type")
-        # [name, [file_name, file_object, content-type]]
+        # f = [name, [file_name, file_object, content-type]]
         f = [None, [None, None, None]]
         if not name:
             continue
@@ -44,16 +41,17 @@ def load_multipart(data: list):
         if not file_name and not file_obj:
             continue
 
-        f[1][2] = content_type if content_type else 'text/plain'
+        # content-type默认为 text/plain;charset=utf-8
+        f[1][2] = content_type if content_type else 'text/plain;charset=utf-8'
 
-        if file_obj and f[1][2] == 'text/plain':
+        if file_obj and f[1][2].startswith('text/plain'):
             f[1][1] = file_obj
 
-        if file_name and f[1][2] != 'text/plain':
+        if file_name and not f[1][2].startswith('text/plain'):
             # 文件名字中不能有斜杠，我一开始还以为这个时随便传的
             warnings.simplefilter('ignore', ResourceWarning)
             f[1][0] = Path(file_name).name
-            f[1][1] = _res_dir.joinpath(file_name).open(mode='rb')
+            f[1][1] = ini.RES_PATH.joinpath(file_name).open(mode='rb')
 
         files[f[0]] = f[1]
     return files
@@ -64,15 +62,15 @@ def send_request(testdata):
     logger.info('method = ' + method)
     url = testdata['url']
     logger.info('url = ' + str(url))
-    params = json.loads(testdata['params']) if testdata['params'] is not None else None
+    params = json.loads(testdata['params']) if testdata['params'] else None
     logger.info('params = ' + str(params))
-    headers = json.loads(testdata['headers']) if testdata['headers'] is not None else None
+    headers = json.loads(testdata['headers']) if testdata['headers'] else None
 
     if headers:
         headers = key_to_lowercase(headers)
         content_type = headers.get('content-type')
         if content_type is not None and content_type.startswith('multipart/form-data'):
-            files = load_multipart(json.loads(testdata['body'])) if testdata['body'] is not None else None
+            files = load_multipart(json.loads(testdata['body'])) if testdata['body'] else None
             # 不要手动添加content-type为multipart/form-data，要让requests自动生成，因为需要requests自动添加boundary
             del headers['content-type']
             body = None
@@ -81,16 +79,16 @@ def send_request(testdata):
             body = testdata['body'].encode('utf-8')
         else:
             files = None
-            body = testdata['body'].encode('utf-8') if testdata['body'] is not None else None
+            body = testdata['body'].encode('utf-8') if testdata['body'] else None
     else:
         files = None
-        body = testdata['body'].encode('utf-8') if testdata['body'] is not None else None
+        body = testdata['body'].encode('utf-8') if testdata['body'] else None
 
     logger.info('headers = ' + str(headers))
-    logger.info('body = ' + str(body) if body is None else body.decode('utf-8'))
+    logger.info('body = ' + body.decode('utf-8') if isinstance(body,bytes) else str(body))
     logger.info('files = ' + str(files))
 
-    proxies = json.loads(ini.Http_Proxy) if ini.Http_Proxy is not None else None
+    proxies = json.loads(ini.Http_Proxy) if ini.Http_Proxy else None
     logger.info('proxies = ' + str(proxies))
 
     if not ini.Http_ServerCertVerify:

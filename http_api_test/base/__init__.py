@@ -1,18 +1,17 @@
 import logging
-from pathlib import Path
 import time
 import sys
-
-_DEBUG = False
+from base import ini
 
 
 def _get_logger():
     _logger = logging.getLogger('http_api_test')
-    _logger.setLevel(logging.DEBUG)
-    if _DEBUG:
+    if ini.DEBUG:
+        _logger.setLevel(logging.DEBUG)
         handler = logging.StreamHandler(stream=sys.stdout)
     else:
-        log_dir = str(Path(__file__).resolve().parents[1] / 'logs')
+        _logger.setLevel(logging.INFO)
+        log_dir = str(ini.LOGS_PATH)
         handler = logging.FileHandler(
             filename='{log_dir}/{name}.logs'.format(log_dir=log_dir,
                                                     name='TestResults__' + time.strftime('%Y-%m-%d_%H-%M-%S')),

@@ -15,15 +15,13 @@ def gen_tcs_path():
     获取测试用例表格的路径，返回的list的元素可以是wb和sheet的二元组，或者仅包含wb
     :return:[[workbook的路径, sheet的名字],[workbook的路径,]...]
     """
-    # run.py不会被其他模块导入，所以可以直接使用相对路径，不会报错
-    tcs_dir = "testcases/"
     if len(sys.argv) == 1:
-        return [[tcs_dir + i] for i in os.listdir(tcs_dir) if i.endswith('.xlsx')]
+        return [[str(ini.TCS_PATH / i)] for i in os.listdir(str(ini.TCS_PATH)) if i.endswith('.xlsx')]
 
     tcs_path = []
     for i in sys.argv[1:]:
         path = i.split('.')
-        path[0] = tcs_dir + path[0] + '.xlsx'
+        path[0] = str(ini.TCS_PATH / path[0] / '.xlsx')
         tcs_path.append(path)
     return tcs_path
 

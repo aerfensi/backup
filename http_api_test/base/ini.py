@@ -1,6 +1,8 @@
 import configparser
 from pathlib import Path
+from pprint import pprint
 
+DEBUG = False
 Http_ServerCertVerify = False
 Http_ServerCert = None
 Http_ClientCert = None
@@ -8,22 +10,25 @@ Http_Proxy = None
 Email_senders = None
 Email_recipients = None
 report_title = 'None'
+PRJ_PATH = Path(__file__).resolve().parents[1]
+CONF_PATH = PRJ_PATH / 'conf.ini'
+LOGS_PATH = PRJ_PATH / 'logs'
+TCS_PATH = PRJ_PATH / 'testcases'
+RES_PATH = PRJ_PATH / 'res'
 
 
 def read():
-    conf_path = str(Path(__file__).resolve().parents[1] / 'conf.ini')
-    print(conf_path)
     config = configparser.ConfigParser()
-    config.read(conf_path, encoding='utf-8')
+    config.read(str(CONF_PATH), encoding='utf-8')
 
     global Http_ServerCertVerify
     Http_ServerCertVerify = config.getboolean('Http', 'ServerCertVerify')
 
     global Http_ServerCert
-    Http_ServerCert = config['Http']['ServerCert']
+    Http_ServerCert = RES_PATH / config['Http']['ServerCert'] if config['Http']['ServerCert'] else None
 
     global Http_ClientCert
-    Http_ClientCert = config['Http']['ClientCert']
+    Http_ClientCert = RES_PATH / config['Http']['ClientCert'] if config['Http']['ClientCert'] else None
 
     global Http_Proxy
     Http_Proxy = config['Http']['Proxy']
@@ -40,4 +45,4 @@ def read():
 
 if __name__ == '__main__':
     read()
-    print(globals())
+    pprint(globals())

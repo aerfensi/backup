@@ -14,7 +14,6 @@ def read_sheet(workbook, sheet):
     tcs = []
     # 判断一下i.value是不是None，为了防止将空的单元格也读进来
     first_line = [i.value for i in next(workbook[sheet].iter_rows(min_row=1, max_row=1)) if i.value is not None]
-    logger.info('first_line = ' + str(first_line))
     if first_line != _HEADER:
         logger.error('测试用例表格的格式错误，不读取该sheet！')
         return []
