@@ -1,6 +1,6 @@
 import jsonpath2
 import re
-from base import logger, props
+from base import logger, props,ini
 
 """
 检查http response的body是否符合测试用例表格中填写的checkpoint。
@@ -80,4 +80,8 @@ def set_props(json_obj, prop_statements: str):
             return
         if props.get(key) is not None:
             logger.warning('props[{}]已经存在，将被覆盖。原值={}，新值={}'.format(key, props[key], str(value)))
-        props[key] = str(value)
+        if ini.DEBUG:
+            with ini.PROPS_PATH.open(mode='a+',encoding='utf-8') as file:
+                file.write('{}: {}\n'.format(key,str(value)))
+        else:
+            props[key] = str(value)

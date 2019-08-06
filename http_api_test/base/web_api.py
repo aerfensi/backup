@@ -85,7 +85,7 @@ def send_request(testdata):
         body = testdata['body'].encode('utf-8') if testdata['body'] else None
 
     logger.info('headers = ' + str(headers))
-    logger.info('body = ' + body.decode('utf-8') if isinstance(body,bytes) else str(body))
+    logger.info('body = ' + body.decode('utf-8') if isinstance(body, bytes) else str(body))
     logger.info('files = ' + str(files))
 
     proxies = json.loads(ini.Http_Proxy) if ini.Http_Proxy else None
@@ -107,7 +107,10 @@ def send_request(testdata):
     logger.info('cert = ' + str(cert))
     logger.info('verify = ' + str(verify))
 
-    resp = requests.request(method=method, url=url, params=params, headers=headers, data=body, proxies=proxies,
+    timeout = int(testdata['timeout']) if testdata['timeout'] else 5
+
+    resp = requests.request(method=method, url=url, params=params, timeout=timeout, headers=headers, data=body,
+                            proxies=proxies,
                             verify=verify, cert=cert, files=files)
 
     return resp

@@ -1,7 +1,8 @@
 from openpyxl import load_workbook
 from base import logger
 
-_HEADER = ['id', 'name', 'ignore', 'method', 'url', 'params', 'headers', 'body', 'statuscode','checkpoints', 'setprops']
+_HEADER = ['id', 'name', 'ignore', 'method', 'url', 'params', 'headers', 'body', 'timeout', 'statuscode', 'checkpoints',
+           'setprops']
 
 
 def read_sheet(workbook, sheet):

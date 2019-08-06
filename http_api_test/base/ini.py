@@ -2,7 +2,8 @@ import configparser
 from pathlib import Path
 from pprint import pprint
 
-DEBUG = False
+# DEBUG开启后，logger的level设置为debug，log输出到屏幕而不是文件，不生成report，测试用例中设置的属性{{}}保存到文件props
+DEBUG = True
 Http_ServerCertVerify = False
 Http_ServerCert = None
 Http_ClientCert = None
@@ -15,7 +16,7 @@ CONF_PATH = PRJ_PATH / 'conf.ini'
 LOGS_PATH = PRJ_PATH / 'logs'
 TCS_PATH = PRJ_PATH / 'testcases'
 RES_PATH = PRJ_PATH / 'res'
-
+PROPS_PATH = PRJ_PATH / 'props'
 
 def read():
     config = configparser.ConfigParser()
@@ -44,5 +45,4 @@ def read():
 
 
 if __name__ == '__main__':
-    read()
-    pprint(globals())
+    pass

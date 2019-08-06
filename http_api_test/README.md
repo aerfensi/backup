@@ -11,12 +11,21 @@
 5. 执行run.py
 6. 在logs目录中得到log，在reports目录中得到测试报告。log与测试报告会以邮件的方式发给conf.ini中填写的收件人
 
+在base/ini中将DEBUG设置为True，有如下效果：
+
+1. logger的level设置为debug，能打印跟多log
+2. log输出到屏幕而不是文件
+3. 不生成report文件
+4. 测试用例中设置的属性{{}}保存到文件props
+
+这个DEBUG开关方便我仅执行测试用例表格中的单个用例。
+
 ## 执行测试用例
 
 测试用例的excel表格只能放在testcases目录下。
 
 执行testcases目录下的所有测试用例表格：  
-python run.py
+`python run.py`
 
 执行指定excel中所有的测试用例（excel文件的名字不要带后缀名）：  
 `python run.py <excel文件的名字>`
@@ -34,7 +43,8 @@ conf.ini中每个属性都有注释，这里不再赘述。
 
 测试用例表格中，几个字段说明一下：  
 ignore：只要填写了，不管填了什么，都会忽略该测试用例。  
-headers：填写为json格式
+params：填写为json格式。  
+headers：填写为json格式。  
 
 body：如果Content-Type为multipart/form-data，则body的格式如下：
 ```json
@@ -55,6 +65,7 @@ body：如果Content-Type为multipart/form-data，则body的格式如下：
 ]
 ```
 
+timeout：单位是秒，不填的话，默认5秒
 statuscode：不填的话默认为200  
 
 checkpoints：检查response body，body必须是json，如果body不是json，那就不要填checkpoints。  
@@ -83,6 +94,7 @@ setprops：将response body中的属性保存下来，供后续的测试用例�
 - testcases：放测试用例表格的
 - tests：放单元测试的
 - conf.ini：配置文件
+- props：开启DEBUG后，测试用例表格中的setprops中填写的需要保存的属性，会被保存到这个文件中
 - run.py：执行文件
 
 ## 用到的第三方模块
