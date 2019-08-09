@@ -1,7 +1,7 @@
+import json
 import os
 import re
 import sys
-import traceback
 import unittest
 
 from ddt import ddt, data
@@ -16,17 +16,14 @@ def gen_tcs_path():
     :return:[[workbook的路径, sheet的名字],[workbook的路径,]...]
     """
     if len(sys.argv) == 1:
-        return [[str(ini.TCS_PATH / i)] for i in os.listdir(str(ini.TCS_PATH)) if i.endswith('.xlsx')]
+        return [[str(ini.tcs_path / i)] for i in os.listdir(str(ini.tcs_path)) if i.endswith('.xlsx')]
 
     tcs_path = []
     for i in sys.argv[1:]:
         path = i.split('.')
-        path[0] = str(ini.TCS_PATH / path[0] / '.xlsx')
+        path[0] = str(ini.tcs_path / (path[0] + '.xlsx'))
         tcs_path.append(path)
     return tcs_path
-
-
-tcs = excel.read_wbs(gen_tcs_path())
 
 
 def key_to_value(text):
@@ -44,25 +41,31 @@ def key_to_value(text):
     return text
 
 
+tcs = excel.read_wbs(gen_tcs_path())
+
+
 @ddt
 class TestApi(unittest.TestCase):
     @data(*tcs)
     def test_api(self, tc):
         logger.info(tc['id'] + ' begin--------------------------------------')
+        # 这个影响到测试报告中的测试用例的名字，所以不管是不是skip，都要加id
+        self.assertTrue(tc['id'])
+        self.id = lambda: tc['id']
         if tc['ignore']:
             self.skipTest(tc['id'] + ' 主动忽略该测试用例')
 
         # 检查测试用例中基本的一些字段是否存在
-        self.assertTrue(tc['id'])
-        self.id = lambda: tc['id']
         self.assertTrue(tc['name'])
         self.assertTrue(tc['method'])
         self.assertTrue(tc['url'])
 
         # debug模式下，props从文件中读取
-        if ini.DEBUG and ini.PROPS_PATH.is_file():
-            with ini.PROPS_PATH.open(encoding='utf-8') as file:
-                props.update(dict([i.split(': ') for i in file.read().splitlines()]))
+        if ini.debug and ini.props_path.is_file():
+            with ini.props_path.open(encoding='utf-8') as file:
+                global props
+                props = json.load(file)
+                logger.debug('从props文件中读取：' + str(props))
 
         # 将测试用例中填写的属性名替换为对应的属性值
         if tc['url']:
@@ -87,14 +90,18 @@ class TestApi(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    try:
-        ini.read()
-    except (KeyError, ValueError):
-        logger.error('配置文件读取失败！')
-        logger.error(traceback.format_exc())
-        raise SystemExit()
     test_suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestApi)
-    if ini.DEBUG:
+    if ini.debug:
         unittest.TextTestRunner().run(test_suite)
     else:
-        HtmlTestRunner.HTMLTestRunner(report_title=ini.report_title).run(test_suite)
+        HtmlTestRunner.HTMLTestRunner(report_title=ini.report_title, report_name=ini.report_title,
+                                      timestamp=ini.timestamp, combine_reports=True).run(test_suite)
+
+    if mail.check():
+        current_log = ini.logs_path / (ini.test_name + '.log')
+        current_report = ini.reports_path / (ini.test_name + '.html')
+        try:
+            mail.zip_attachment([current_log, current_report])
+            mail.send()
+        finally:
+            mail.rm_archive()

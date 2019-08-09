@@ -13,11 +13,12 @@ class HTMLTestRunner(TextTestRunner):
 
     time_format = "%Y-%m-%d_%H-%M-%S"
 
+    # modify 增加timestamp参数，目的是为了让生成的测试报告的名字与log文件的名字相同
     def __init__(self, output="./reports/", verbosity=2, stream=sys.stderr,
                  descriptions=True, failfast=False, buffer=False,
                  report_title=None, report_name=None, template=None, resultclass=None,
                  add_timestamp=True, open_in_browser=False,
-                 combine_reports=False, template_args=None):
+                 combine_reports=False, template_args=None,timestamp=None):
         self.verbosity = verbosity
         self.output = output
         self.encoding = UTF8
@@ -29,6 +30,10 @@ class HTMLTestRunner(TextTestRunner):
             self.timestamp = time.strftime(self.time_format)
         else:
             self.timestamp = ""
+
+        # modify 增加timestamp参数
+        if timestamp:
+            self.timestamp=timestamp
 
         if resultclass is None:
             self.resultclass = HtmlTestResult

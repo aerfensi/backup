@@ -1,6 +1,9 @@
-import jsonpath2
+import json
 import re
-from base import logger, props,ini
+
+import jsonpath2
+
+from base import logger, props, ini
 
 """
 检查http response的body是否符合测试用例表格中填写的checkpoint。
@@ -36,22 +39,22 @@ def check(json_obj, checkpoints: str):
 
         if operator == '==':
             if value_by_json_path != eval(expectation):
-                return False, '{} != {}'.format(str(value_by_json_path), str(eval(expectation)))
+                return False, '预期：{}，实际：{} != {}'.format(checkpoint,str(value_by_json_path), str(eval(expectation)))
         elif operator == '!=':
             if value_by_json_path == eval(expectation):
-                return False, '{} == {}'.format(str(value_by_json_path), str(eval(expectation)))
+                return False, '预期：{}，实际：{} == {}'.format(checkpoint,str(value_by_json_path), str(eval(expectation)))
         elif operator == '<':
             if value_by_json_path >= eval(expectation):
-                return False, '{} >= {}'.format(str(value_by_json_path), str(eval(expectation)))
+                return False, '预期：{}，实际：{} >= {}'.format(checkpoint,str(value_by_json_path), str(eval(expectation)))
         elif operator == '>':
             if value_by_json_path <= eval(expectation):
-                return False, '{} <= {}'.format(str(value_by_json_path), str(eval(expectation)))
+                return False, '预期：{}，实际：{} <= {}'.format(checkpoint,str(value_by_json_path), str(eval(expectation)))
         elif operator == '<=':
             if value_by_json_path > eval(expectation):
-                return False, '{} > {}'.format(str(value_by_json_path), str(eval(expectation)))
+                return False, '预期：{}，实际：{} > {}'.format(checkpoint,str(value_by_json_path), str(eval(expectation)))
         elif operator == '>=':
             if value_by_json_path < eval(expectation):
-                return False, '{} < {}'.format(str(value_by_json_path), str(eval(expectation)))
+                return False, '预期：{}，实际：{} < {}'.format(checkpoint,str(value_by_json_path), str(eval(expectation)))
         elif operator == '=~':
             if not isinstance(value_by_json_path, str):
                 return False, '{}不是字符串类型'.format(str(value_by_json_path))
@@ -80,8 +83,8 @@ def set_props(json_obj, prop_statements: str):
             return
         if props.get(key) is not None:
             logger.warning('props[{}]已经存在，将被覆盖。原值={}，新值={}'.format(key, props[key], str(value)))
-        if ini.DEBUG:
-            with ini.PROPS_PATH.open(mode='a+',encoding='utf-8') as file:
-                file.write('{}: {}\n'.format(key,str(value)))
-        else:
-            props[key] = str(value)
+
+        props[key] = str(value)
+        if ini.debug:
+            with ini.props_path.open(mode='w+', encoding='utf-8') as file:
+                json.dump(props,file)

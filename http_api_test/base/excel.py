@@ -12,6 +12,7 @@ def read_sheet(workbook, sheet):
     :param sheet: sheet名字的str
     :return: [{记录用例信息的字典},...]
     """
+    logger.debug('sheet: '+sheet)
     tcs = []
     # 判断一下i.value是不是None，为了防止将空的单元格也读进来
     first_line = [i.value for i in next(workbook[sheet].iter_rows(min_row=1, max_row=1)) if i.value is not None]
@@ -33,6 +34,7 @@ def read_wb(workbook, sheet=None):
     :param sheet: sheet名字的str，如果是None，则读取整个workbook
     :return: [{记录用例信息的字典},...]
     """
+    logger.debug('workbook: '+workbook)
     wb = load_workbook(workbook)
     tcs = []
     if sheet is not None:
@@ -48,6 +50,7 @@ def read_wbs(tcs_path):
     :param tcs_path: 元素可以是二元组或一元组的列表
     :return: [{记录用例信息的字典},...]
     """
+    logger.debug('tcs_path: '+str(tcs_path))
     tcs = []
     for i in tcs_path:
         if len(i) != 1 and len(i) != 2:

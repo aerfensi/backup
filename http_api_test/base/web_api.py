@@ -51,7 +51,7 @@ def load_multipart(data: list):
             # 文件名字中不能有斜杠，我一开始还以为这个时随便传的
             warnings.simplefilter('ignore', ResourceWarning)
             f[1][0] = Path(file_name).name
-            f[1][1] = ini.RES_PATH.joinpath(file_name).open(mode='rb')
+            f[1][1] = ini.res_path.joinpath(file_name).open(mode='rb')
 
         files[f[0]] = f[1]
     return files
@@ -88,19 +88,19 @@ def send_request(testdata):
     logger.info('body = ' + body.decode('utf-8') if isinstance(body, bytes) else str(body))
     logger.info('files = ' + str(files))
 
-    proxies = json.loads(ini.Http_Proxy) if ini.Http_Proxy else None
+    proxies = json.loads(ini.proxy) if ini.proxy else None
     logger.info('proxies = ' + str(proxies))
 
-    if not ini.Http_ServerCertVerify:
+    if not ini.server_cert_verify:
         urllib3.disable_warnings()
         verify = False
-    elif ini.Http_ServerCertVerify and ini.Http_ServerCert:
-        verify = ini.Http_ServerCert
+    elif ini.server_cert_verify and ini.server_cert:
+        verify = ini.server_cert
     else:
         verify = True
 
-    if ini.Http_ClientCert:
-        cert = ini.Http_ClientCert
+    if ini.client_cert:
+        cert = ini.client_cert
     else:
         cert = None
 
