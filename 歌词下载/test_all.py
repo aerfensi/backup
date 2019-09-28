@@ -51,3 +51,6 @@ class TestLyricCrawler(unittest.TestCase):
         # lyric=funcs.merge_lrc_timedelta(o_lyric,t_lyric)
         lyric = funcs.merge_lrc_timedelta(o_lyric, t_lyric)
         print(lyric)
+
+    def test_url_parse(self):
+        print(lyric_crawler.url_parse('https://y.qq.com/n/yqq/song/004QC9Z62Z5K6b.html'))

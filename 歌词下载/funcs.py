@@ -5,6 +5,10 @@ import json
 from base64 import b64decode
 from datetime import datetime
 
+"""
+主要存放Lyric类需要用到的函数
+"""
+
 # 不要显示警告，比如不显示忽略SSL证书检验时的警告
 urllib3.disable_warnings()
 

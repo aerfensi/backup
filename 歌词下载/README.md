@@ -11,16 +11,6 @@
 
 使用方法：执行lyric_crawler.py脚本即可。
 
-## 查找歌曲id的方法
-
-1. 打开网易云音乐或QQ音乐的网页
-1. 搜索需要下载歌词的歌曲
-1. 打开该歌曲的网页
-1. 从url中找到id
-
-网易云音乐：`https://music.163.com/#/song?id=1338695683` → id=1338695683  
-QQ音乐：`https://y.qq.com/n/yqq/song/003ULL5o2D7UMu.html` → id=003ULL5o2D7UMu
-
 ## API
 
 ### 网易云音乐  

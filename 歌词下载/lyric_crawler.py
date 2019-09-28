@@ -3,6 +3,7 @@ from os import path
 from funcs import *
 from time import time
 import pyperclip
+import re
 
 SOURCE = Enum('Source', {'Nets': '网易', 'Tencent': '腾讯'})
 
@@ -86,9 +87,9 @@ class Lyric:
                 with open(self.file_path, 'w', encoding='utf-8') as file:
                     file.write(self.lyric)
             else:
-                with open(self.file_path+".o", 'w', encoding='utf-8') as o_file:
+                with open(self.file_path + ".o", 'w', encoding='utf-8') as o_file:
                     o_file.write(self.o_lyric)
-                with open(self.file_path+".t", 'w', encoding='utf-8') as t_file:
+                with open(self.file_path + ".t", 'w', encoding='utf-8') as t_file:
                     t_file.write(self.t_lyric)
 
         except OSError as os_e:
@@ -100,41 +101,42 @@ class Lyric:
 
 def print_info():
     info = (
-        "输入格式：filename,source,id[,merge]\n"
-        "source类型：\n"
-        "q：QQ音乐\n"
-        "w：网易音乐\n"
-        "x：虾米音乐\n"
-        "debug：为0，不合并歌词；为其他或不填，合并歌词\n"
+        "输入格式：filename,url[,merge]\n"
+        "filename：将保存的歌词的文件名\n"
+        "url：歌曲在网易云音乐或QQ音乐上的URL\n"
+        "merge：为0，不合并歌词；为其他或不填，合并歌词\n"
         "需要merge标志是因为有些歌词原文译文合并错乱，只能手动合并\n")
     print(info)
 
 
+def url_parse(url):
+    match = re.fullmatch(r'https://music.163.com/#/song\?id=(\d+)', url)
+    if match:
+        return SOURCE.Nets, match.group(1)
+
+    match = re.fullmatch(r'https://y.qq.com/n/yqq/song/(\w+)\.html', url)
+    if match:
+        return SOURCE.Tencent, match.group(1)
+
+    raise AssertionError('<url_parse> error: url解析失败')
+
+
 def user_in() -> (str, SOURCE, str):
     args = input('请输入: ').split(',')
-    assert len(args) > 2, '<user_in> error: 输入参数数量小于3'
+    assert 1 < len(args) < 4, '<user_in> error: 输入参数数量错误'
 
-    id_ = args[2].strip()
-    debug(id_)
-
-    src = args[1].strip()
-    debug(src)
-    if src == 'w':
-        assert id_.isdigit(), '<user_in> error: 输入的id不是数字'
-        src = SOURCE.Nets
-    elif src == 'q':
-        src = SOURCE.Tencent
-    else:
-        raise AssertionError('<user_in> error: 输入的source不支持')
+    src, id_ = url_parse(args[1].strip())
+    debug('id_={}\nsrc={}'.format(id_, src))
 
     filename = args[0].strip() + '.lrc'
-    debug(filename)
+    debug('filename=' + filename)
 
     merge_flag = True
 
-    if len(args) > 3 and args[3] == "0":
+    if len(args) == 3 and args[2] == "0":
         merge_flag = False
 
+    debug('merge_flag=' + str(merge_flag))
     return id_, src, filename, merge_flag
 
 
